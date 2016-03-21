@@ -1,4 +1,4 @@
-# elmination-game-sim
+# ElimSim
 
 This is a simulator that plays elimination games of the type popular on Doctor 
 Who forums such as [Gallifrey Base](http://gallifreybase.com/). 
