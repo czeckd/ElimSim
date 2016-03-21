@@ -1,0 +1,4 @@
+src/**/*~
+src/**/*.SAVE
+elim.dSYM/**
+elim
