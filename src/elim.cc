@@ -1,7 +1,6 @@
 #include <ctime>
 #include <string>
 #include <map>
-#include <vector>
 #include <sstream>
 #include <fstream>
 #include <iostream>
@@ -77,18 +76,21 @@ public:
 			scit++;
 		}
 
-		cout << endl << "Eliminated:" << endl;
+		if (_elims.size() > 0) {
+			cout << endl << "Eliminated:" << endl;
 
-		auto nit = _elims.begin();
-		while (nit != _elims.end()) {
-			cout << right << setw(3) << setfill(' ') << (*nit).first << ". " << (*nit).second << endl;
-			nit++;
+			auto nit = _elims.begin();
+			while (nit != _elims.end()) {
+				cout << right << setw(3) << setfill(' ') << (*nit).first << ". " << (*nit).second << endl;
+				nit++;
+			}
 		}
 		cout << endl;	
 	}
 	
 	void sim()
 	{
+		// Build the points for each story
 		auto it = _names.begin();
 		while (it != _names.end()) {
 			_points.insert(make_pair((*it).second, _votes));
@@ -106,37 +108,32 @@ public:
 				minus = number(1, _points.size());
 			}
 
-
-			int i = 1;
 			stringstream ss;			
-
-			// Brute force
 			auto pit = _points.begin();
-			for (; pit != _points.end(); i++, ++pit) {
-				if (i == plus) {
-					pit->second += UP_VOTE;
-					ss.str(string()); // reset
-					ss << pit->first << " [" << pit->second << "] " << UP_VOTE;
-					pbuf = ss.str();
 
-				} else if (i == minus) {
-					pit->second += DOWN_VOTE;
-					ss.str(string()); // reset
-					ss << pit->first << " [" << pit->second << "] " << DOWN_VOTE;
-					mbuf = ss.str();
-
-					if (pit->second <= 0) {
-						_elims.insert(make_pair(_names.size() - _elims.size(), pit->first));
-						_points.erase(pit);
-						pit = _points.begin();
-						i = 0;	// reset
-					}
-				}
-			}
+			// Adjust the plus story
+			advance(pit, plus - 1);
+			pit->second += UP_VOTE;
+			ss << pit->first << " [" << pit->second << "] " << UP_VOTE;
+			pbuf = ss.str();
 			
+			pit = _points.begin();
+			// Adjust the minus story
+			advance(pit, minus - 1);
+			pit->second += DOWN_VOTE;
+			ss.str(string()); // reset
+			ss << pit->first << " [" << pit->second << "] " << DOWN_VOTE;
+			mbuf = ss.str();
+			
+			// Was minus story eliminated?
+			if (pit->second <= 0) {
+				_elims.insert(make_pair(_names.size() - _elims.size(), pit->first));
+				_points.erase(pit);
+				pit = _points.begin();
+			}
+
 			print(&pbuf, &mbuf);
 // getline (cin, pbuf);
-
 		}
 	}
 	
