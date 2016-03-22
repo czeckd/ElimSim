@@ -20,7 +20,7 @@ clean:
 	rm -rf ../elim ../elim.dSYM
 
 tidy:
-	rm -f *.cc~ *c~ Makefile~
+	rm -f *.cc~ *c~ *.h~ Makefile~
 
 elim: 
 	$(CC) -o ../elim $(CFLAGS) $(OBJFILES)
