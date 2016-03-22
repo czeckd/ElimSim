@@ -2,6 +2,8 @@
 #include <fstream>
 #include <iostream>
 #include <iomanip>
+#include <vector>
+
 
 #include "Elimination.h"
 #include "Rndm.h"
@@ -71,8 +73,8 @@ void Elimination::print(string *pbuf, string *mbuf)
 	}
 	cout << endl;	
 }
-	
-void Elimination::sim()
+
+void Elimination::initPoints()
 {
 	// Build the points for each story
 	auto it = _names.begin();
@@ -80,6 +82,14 @@ void Elimination::sim()
 		_points.insert(make_pair((*it).second, _votes));
 		it++;
 	}
+}
+
+/*	
+ * Random voting.
+ */
+void Elimination::sim()
+{
+	initPoints();
 		
 	while (_points.size() > 1) {
 		++_turn;
@@ -119,3 +129,106 @@ void Elimination::sim()
 // getline (cin, pbuf);
 	}
 }
+
+
+/* 
+ * Players have their own preferences, so set them and use their preferences
+ * to drive how they vote.
+ */
+void Elimination::psim()
+{
+	initPoints();
+
+	static const int MAX_PLAYERS = 8;
+	vector<string> pref[MAX_PLAYERS];
+	int p;
+
+	// Set up players with a randomized preference order.
+	for (p = 0; p < MAX_PLAYERS; ++p) {
+		while (pref[p].size() < _names.size()) {
+			int r = Rndm::number(1, _names.size());
+			auto nit = _names.begin();
+			advance(nit, r-1); // zero-based
+			
+			auto prit = find(pref[p].begin(), pref[p].end(), nit->second);
+			if (prit == pref[p].end()) {
+				pref[p].push_back(nit->second); 
+			}
+		}
+	}	
+
+#if 0
+	// Print out players' voting prefs.
+	for (p = 0; p < MAX_PLAYERS; ++p) {
+		int i = 0;
+		for (auto v : pref[p]) {
+			cout << "P" << p << " " << setw(2) << ++i << " " << v << endl; 
+		}
+		cout <<"------" << endl;
+	}
+#endif
+
+	string pbuf, mbuf;
+	
+	while (_points.size() > 1) {
+		for (p = 0; p < MAX_PLAYERS; ++p) {
+			if (_points.size() <= 1) {
+				break;
+			}
+
+			cout << "Player " << p << endl;
+			++_turn;
+
+			// find plus story
+			auto prit = pref[p].begin();
+			while (prit != pref[p].end()) {
+				auto pit = _points.find(*prit); 
+				if (pit != _points.end()) {
+					pit->second += UP_VOTE;
+					stringstream ss;
+					ss << pit->first << " [" << pit->second << "] " << UP_VOTE;
+					pbuf = ss.str();
+					break;
+				}
+				prit++;
+			}
+
+			// find minus story
+			auto rrit = pref[p].rbegin();
+			while (rrit != pref[p].rend()) {
+				auto pit = _points.find(*rrit);
+				if (pit != _points.end()) {
+					pit->second += DOWN_VOTE;
+					stringstream ss;
+					ss << pit->first << " [" << pit->second << "] " << DOWN_VOTE;
+					mbuf = ss.str();
+
+					// Was minus story eliminated?
+					if (pit->second <= 0) {
+						_elims.insert(make_pair(_names.size() - _elims.size(), pit->first));
+						_points.erase(pit);
+						pit = _points.begin();
+					}
+
+					break;
+				}
+				rrit++;
+			}
+
+			print(&pbuf, &mbuf);
+// getline (cin, pbuf);
+
+		}
+
+	}
+
+	// Print out player's choice that matches winner.
+	for (p = 0; p < MAX_PLAYERS; ++p) {
+		auto prit = find(pref[p].begin(), pref[p].end(), (_points.begin())->first);
+		int dist = distance(pref[p].begin(), prit);
+
+		cout << "Player " << p << " choice " << dist + 1 << endl;
+	}
+
+}
+

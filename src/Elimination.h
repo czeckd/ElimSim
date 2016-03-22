@@ -18,6 +18,7 @@ public:
 	void list();
 	void print(std::string *pbuf = NULL, std::string *mbuf = NULL);
 	void sim();
+	void psim();
 	
 	inline void setFilename(std::string filename) {
 		_filename = filename;
@@ -25,6 +26,9 @@ public:
 
 
 private:
+	void initPoints();
+
+
 	static const int MAX_VOTES = 20;
 	static const int UP_VOTE = 1;
 	static const int DOWN_VOTE = -2;

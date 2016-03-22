@@ -37,7 +37,8 @@ exit(0);
 		
 		elim.setFilename(argv[1]);
 		elim.load();
-		elim.sim();
+//		elim.sim();
+		elim.psim();
 	} else {
 		cerr << "Usage: " << argv[0] << " datafile" << endl;
 	}
