@@ -4,23 +4,32 @@ CC = g++
 CFLAGS = -g -Wall -std=c++11
 #CFLAGS = -Wall -std=c++11
 
+LIBS =
+
 UNAME := $(shell which uname)
 SYSTEM := $(shell $(UNAME) -s)
 ARCH := $(shell $(UNAME) -m | sed 's/ /_/g')
 
-#OBJDIR = ../obj/$(SYSTEM)_$(ARCH)_obj
+OBJDIR = ../obj/$(SYSTEM)_$(ARCH)_obj
 
-SRCFILES := $(shell find . -maxdepth 1 -name "*.cc")
-OBJFILES := $(patsubst %.cpp, %.o, $(SRCFILES))
+APP := elim
+SRCFILES := $(shell find *.cc -type f -print)
+OBJFILES := $(patsubst %.cc, $(OBJDIR)/%.o, $(SRCFILES))
 
 all:
-	$(MAKE) elim
+	$(MAKE) $(APP)
 
 clean:
-	rm -rf ../elim ../elim.dSYM
+	rm -rf ../$(APP) ../$(APP).dSYM $(OBJFILES)
 
 tidy:
 	rm -f *.cc~ *c~ *.h~ Makefile~
 
-elim: 
-	$(CC) -o ../elim $(CFLAGS) $(OBJFILES)
+mkobjdir    :
+	@if [ ! -x $(OBJDIR) ] ; then mkdir -p $(OBJDIR) ; fi
+
+$(OBJDIR)/%.o : %.cc
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+$(APP): mkobjdir $(OBJFILES) 
+	$(CC) $(CFLAGS) -o ../$(APP) $(OBJFILES) $(LIBS)
