@@ -36,7 +36,7 @@ void Elimination::list()
 	auto it = _names.begin();
 	while (it != _names.end()) {
 		cout << (*it).second << endl;
-		it++;
+		++it;
 	}
 }
 
@@ -59,7 +59,7 @@ void Elimination::print(string *pbuf, string *mbuf)
 			cout << "Winner: " << endl;
 		}
 		cout << left << setfill(' ') << setw(34) << scit->first << " [" << scit->second << "]" << endl;
-		scit++;
+		++scit;
 	}
 
 	if (_elims.size() > 0) {
@@ -68,7 +68,7 @@ void Elimination::print(string *pbuf, string *mbuf)
 		auto nit = _elims.begin();
 		while (nit != _elims.end()) {
 			cout << right << setw(3) << setfill(' ') << (*nit).first << ". " << (*nit).second << endl;
-			nit++;
+			++nit;
 		}
 	}
 	cout << endl;	
@@ -80,7 +80,7 @@ void Elimination::initPoints()
 	auto it = _names.begin();
 	while (it != _names.end()) {
 		_points.insert(make_pair((*it).second, _votes));
-		it++;
+		++it;
 	}
 }
 
@@ -190,7 +190,7 @@ void Elimination::psim()
 					pbuf = ss.str();
 					break;
 				}
-				prit++;
+				++prit;
 			}
 
 			// find minus story
@@ -212,7 +212,7 @@ void Elimination::psim()
 
 					break;
 				}
-				rrit++;
+				++rrit;
 			}
 
 			print(&pbuf, &mbuf);
