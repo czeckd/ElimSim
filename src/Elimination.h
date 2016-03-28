@@ -16,7 +16,7 @@ public:
 
 	void load();
 	void list();
-	void print(std::string *pbuf = NULL, std::string *mbuf = NULL);
+	void print(std::string *pbuf = nullptr, std::string *mbuf = nullptr);
 	void sim();
 	void psim();
 	
