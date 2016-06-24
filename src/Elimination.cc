@@ -3,7 +3,7 @@
 #include <iostream>
 #include <iomanip>
 #include <vector>
-
+#include <algorithm>
 
 #include "Elimination.h"
 #include "Rndm.h"
@@ -209,7 +209,6 @@ void Elimination::psim()
 						_points.erase(pit);
 						pit = _points.begin();
 					}
-
 					break;
 				}
 				++rrit;
@@ -219,7 +218,6 @@ void Elimination::psim()
 // getline (cin, pbuf);
 
 		}
-
 	}
 
 	// Print out player's choice that matches winner.
